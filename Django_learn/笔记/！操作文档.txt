@@ -1,0 +1,43 @@
+conda终端：
+启动conda虚拟环境
+conda activate myDjango
+运行服务器
+python manage.py runserver
+
+pycharm命令：
+创建app
+python manage.py startapp app_name
+
+MySQL数据库：
+登录：
+mysql -uroot -p123456
+退出数据库：
+exit/quit
+显示所有的数据库
+show databases;
+创建数据库
+create database 数据库名;
+删除数据库
+drop database 数据库名;
+
+使用数据库
+use 数据库名;
+显示所有表名称
+show tables;
+查看表结构
+desc 表名;
+查看表内容
+select * from 表名;
+创建表
+create table 表名(列名 数据类型,列名 数据类型,...);
+删除表
+drop table 表名;
+表中添加数据
+insert into app01_prettynum(列) value(值);
+
+Django更新数据库
+python manage.py makemigrations
+python manage.py migrate
+
+
+
