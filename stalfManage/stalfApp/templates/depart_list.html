@@ -1,0 +1,48 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">上传文件</div>
+        <div class="panel-body">
+          <form method="post" enctype="multipart/form-data" action="/depart/multi/">
+            {% csrf_token %}
+            <input type="file" name="exc">
+            <input type="submit" style="margin-top: 15px" class="btn btn-info btn-sm" value="上传">
+          </form>
+        </div>
+    </div>
+
+
+    <div style="margin-bottom: 10px">
+        <a class="btn btn-primary" href="/depart/add/">新建部门</a>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">部门列表</div>
+
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>名称</th>
+                <th>操作</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for obt in data_list %}
+            <tr>
+                <th>{{ obt.id }}</th>
+                <td>{{ obt.title }}</td>
+                <td>
+                    <a class="btn btn-primary btn-xs" href="/depart/{{ obt.id }}/edit/">编辑</a>
+                    <a class="btn btn-danger btn-xs" href="/depart/delete/?nid={{ obt.id }}">删除</a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+

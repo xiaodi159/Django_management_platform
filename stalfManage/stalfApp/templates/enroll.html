@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>职工管理系统</title>
+    <link rel="stylesheet" href="../static/css/enroll.css">
+</head>
+
+<body>
+    <div class="box">
+        <div class="content">
+            <h2>登录</h2>
+<!--            <div>-->
+<!--                <input type="text" placeholder="请输入用户名">-->
+<!--            </div>-->
+<!--            <div>-->
+<!--                <input type="password" placeholder="请输入密码">-->
+<!--            </div>-->
+<!--            <div>-->
+<!--                <input type="submit" value="登录">-->
+<!--            </div>-->
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+                <div>
+                    <input type="text" placeholder="请输入密码" name="name">
+                </div>
+                <span style="color: red">
+                    {{ form.name.errors.0 }}
+                </span>
+                <div>
+                    <input type="password" placeholder="请输入密码" name="password">
+                </div>
+                <span style="color: red">
+                    {{ form.password.errors.0 }}
+                </span>
+                <div>
+                    <button type="submit" class="submit">登录</button>
+                </div>
+
+            </form>
+        </div>
+<!--        <a href="#" class="btns">忘记密码</a>-->
+        <a href="/admin/add/" class="btns register">注册</a>
+    </div>
+</body>
+
+</html>

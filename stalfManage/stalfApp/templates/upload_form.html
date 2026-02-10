@@ -1,0 +1,22 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">{{ title }}</div>
+        <div class="panel-body">
+            <form method="post" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="form-group">
+                    <label>{{ field.label }}</label>
+                    {{ field }}
+                    <span style="color: red">{{ field.errors.0 }}</span>
+                </div>
+                {% endfor %}
+                <input type="submit" style="" class="btn btn-info btn-sm" value="提交">
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

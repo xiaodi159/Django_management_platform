@@ -1,0 +1,239 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">表单</div>
+            <div class="panel-body">
+                <form id="FormAdd">
+                    <div class="clearfix">
+                        {% for field in form %}
+                            <div class="col-xs-6">
+                                <div class="form-group" style="position: relative; margin-bottom: 20px">
+                                    <label>{{ field.label }}</label>
+                                    {{ field }}
+                                    <span style="color: red; position: absolute"></span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>C
+                    <div class="col-xs-12">
+                        <button id="btnAdd" type="button" class="btn btn-primary">提 交</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+        <div class="panel-heading">任务列表</div>
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>标题</th>
+                        <th>详情</th>
+                        <th>级别</th>
+                        <th>负责人</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for obj in queryset %}
+                <tr>
+                  <th>{{ obj.id }}</th>
+                  <td>{{ obj.title }}</td>
+<!--              将密码设置为无法查看（设为符号标识）-->
+                  <td>{{ obj.detail }}</td>
+<!--              obj.get_level_display 获取级别中文名称-->
+                  <td>{{ obj.get_level_display }}</td>
+                  <td>{{ obj.user.name }}</td>
+
+<!--                  <td>-->
+<!--                    <a href="/admin/{{ obj.id }}/reset/">重置密码</a>-->
+<!--                  </td>-->
+                  <td>
+<!--                    <a class="btn btn-primary btn-xs" href="#">编辑</a>-->
+                      <a class="btn btn-danger btn-xs" href="#">删除</a>
+
+                  </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <hr style="color: red">
+        <div style="height: 1000px; margin-top: 100px">
+
+        </div>
+
+        <hr style="color: red">
+        <h1>Ajax学习</h1>
+
+        <h3>示例一：</h3>
+        <input id="btn1" type="button" class="btn btn-primary" value="点击" />
+
+        <h3>实例二：</h3>
+        <input type="text" id="userName" placeholder="姓名"/>
+        <input type="text" id="userAge" placeholder="年龄"/>
+        <input id="btn2" type="button" class="btn btn-primary" value="点击" />
+
+        <h3>实例三：</h3>
+        <form action="" id="form1">
+            <input type="text" name="name" placeholder="姓名"/>
+            <input type="text" name="age" placeholder="年龄"/>
+            <input type="text" name="email" placeholder="邮箱"/>
+            <input type="text" name="introduce" placeholder="自我介绍"/>
+        </form>
+        <input id="btn3" type="button" class="btn btn-primary" value="点击" />
+
+    </div>
+
+
+{% endblock %}
+
+
+{% block js %}
+    <script type="text/javascript">
+        // 绑定事件
+        $(function (){
+            // 页面框架加载完成滞后自动执行
+            bindBtn1Event();
+
+            bindBtn2Event();
+
+            bindBtn3Event();
+
+            bindBtnAddEvent();
+
+        })
+
+        function bindBtn1Event(){
+            $("#btn1").click(function (){
+                $.ajax({
+                    // 请求发送地址url
+                    url:'/task/ajax/',
+                    type:'post',
+                    // 传递参数（数据）
+                    data:{
+                        n1:123,
+                        n2:456,
+                    },
+                    // 将数据格式转变为JSON格式，方便获取数据（类 索引）
+                    dataType:"JSON",
+                    success:function (res){
+                        // 如果发送成功进行的操作
+                        console.log(res);
+                        console.log(res.statud);
+                        console.log(res.data);
+
+                    }
+                })
+            })
+        }
+
+        // 通过id获取数据
+        function bindBtn2Event(){
+            $("#btn2").click(function (){
+                $.ajax({
+                    // 请求发送地址url
+                    url:'/task/ajax/',
+                    type:'post',
+                    // 传递参数（数据）
+                    data:{
+                        // 通过标签获取input输入框所输入的内容
+                        name:$("#userName").val(),
+                        age:$("#userAge").val(),
+                    },
+                    // 将数据格式转变为JSON格式，方便获取数据（类 索引）
+                    dataType:"JSON",
+                    success:function (res){
+                        // 如果发送成功进行的操作
+                        console.log(res);
+                        console.log(res.statud);
+                        console.log(res.data);
+
+                    }
+                })
+            })
+        }
+
+        // 通过form表单获取数据
+        function bindBtn3Event(){
+            $("#btn3").click(function (){
+                $.ajax({
+                    // 请求发送地址url
+                    url:'/task/ajax/',
+                    type:'post',
+                    // 传递参数（数据）
+                    data:$("#form1").serialize(),
+                    // 将数据格式转变为JSON格式，方便获取数据（类 索引）
+                    dataType:"JSON",
+                    success:function (res){
+                        // 如果发送成功进行的操作
+                        console.log(res);
+                    }
+                })
+            })
+        }
+
+        // 任务管理案例
+        function bindBtnAddEvent(){
+            $("#btnAdd").click(function (){
+                // 清空错误信息
+                $(".error-msg").empty();
+
+
+                $.ajax({
+                    // 请求发送地址url
+                    url:'/task/add/',
+                    type:'post',
+                    // 传递参数（数据）
+                    data:$("#FormAdd").serialize(),
+                    // 将数据格式转变为JSON格式，方便获取数据（类 索引）
+                    dataType:"JSON",
+                    success:function (res){
+                        if(res.status){
+                            alert("添加成功！")
+                            // 通过JS进行页面的刷新
+                            location.reload();
+                        }else {
+                            $.each(res.error, function (name, data){
+                                // console.log(name, data)
+                                // 进行字符串的拼接
+                                $('#id_' + name).next().text(data[0])
+                            })
+                        }
+
+                    }
+                })
+            })
+        }
+
+
+
+        function clickMe(){
+            // console.log("点击按钮")
+
+            // 通过ajax发送请求不会刷新页面
+            //通过  onclick="clickMe();"
+            $.ajax({
+                // 请求发送地址url
+                url:'/task/ajax/',
+                type:'post',
+                // 传递参数（数据）
+                data:{
+                    n1:123,
+                    n2:456,
+                },
+                success:function (res){
+                    // 如果发送成功进行的操作
+                    console.log(res);
+                }
+            })
+        }
+    </script>
+
+{% endblock %}

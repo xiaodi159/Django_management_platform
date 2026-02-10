@@ -1,0 +1,238 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">折线图</div>
+        <div class="panel-body">
+            <div id="m1" style="width: 100%; height: 300px"></div>
+        </div>
+    </div>
+
+    <div class="col-sm-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">柱状图</div>
+            <div class="panel-body">
+                <div id="m2" style="width: 100%; height: 400px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">圆饼图</div>
+            <div class="panel-body">
+                <div id="m3" style="width: 100%; height: 400px"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+
+{% block js %}
+<script src="{% static 'js/echarts.js' %}"></script>
+<!--<script src=” https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js“></script>-->
+<script type="text/javascript">
+    $(function () {
+        initBar();
+
+        initPie();
+
+        initLine();
+    })
+
+    /**
+     * 绘制折线图
+     */
+    function initLine(){
+        var chartDom = document.getElementById('m1');
+        var myChart = echarts.init(chartDom);
+        var option;
+
+        option = {
+            title: {
+                text: '人员业绩折线图',
+                // 标题居中显示
+                textAlign: "auto",
+                left: "center",
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data: ['xiaodi', 'wangwu',],
+                bottom: 0,
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                    name: 'xiaodi',
+                    type: 'line',
+                    stack: 'Total',
+                    data: [120, 132, 101, 134, 90, 230, 210]
+                },
+                {
+                    name: 'wangwu',
+                    type: 'line',
+                    stack: 'Total',
+                    data: [220, 182, 191, 234, 290, 330, 310]
+                },
+            ]
+        };
+
+        myChart.setOption(option);
+    }
+
+    /**
+     * 初始化柱状图
+     * **/
+    function initBar() {
+// 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('m2'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: '人员业绩柱状图',
+                // 标题居中显示
+                textAlign: "auto",
+                left: "center",
+            },
+            tooltip: {},
+            legend: {
+                data: [],
+                bottom: 0,
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            xAxis: {
+                data: []
+            },
+            yAxis: {},
+            series: []
+        };
+
+        // 向后台发送ajax请求，获取数据
+        $.ajax({
+            url: "/chart/bar/",
+            type: "get",
+            dataType: "JSON",
+            success: function (res) {
+                if (res.status) {
+                    // 从数据库中获取数据并进行更新到option中
+                    option.legend.data = res.data.legend;
+                    option.xAxis.data = res.data.xAxis_list;
+                    option.series = res.data.series_list;
+                    // 使用刚指定的配置项和数据显示图表。
+                    myChart.setOption(option);
+                } else {
+
+                }
+
+            }
+        })
+
+
+    }
+
+
+    /**
+     * 初始化饼状图
+     */
+    function initPie() {
+        var chartDom = document.getElementById('m3');
+        var myChart = echarts.init(chartDom);
+        var option;
+
+        option = {
+            title: {
+                text: '人员业绩圆饼图',
+                // 标题居中显示
+                textAlign: "auto",
+                left: "center",
+            },
+
+            tooltip: {
+                trigger: 'item',
+            },
+            legend: {
+                // top: '5%',
+                // left: 'center',
+                bottom: 0
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            series: [
+                {
+                    name: '预算',
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    avoidLabelOverlap: false,
+                    itemStyle: {
+                        borderRadius: 10,
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    },
+                    label: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: 40,
+                            fontWeight: 'bold'
+                        }
+                    },
+                    labelLine: {
+                        show: false
+                    },
+                    data: []
+                }
+            ]
+        };
+        $.ajax({
+            url: "/chart/bar/",
+            type: "get",
+            dataType: "JSON",
+            success: function (res) {
+                if (res.status) {
+                    // 更新数据
+                    option.series[0].data = res.data.pie_data;
+                    myChart.setOption(option);
+                }
+            }
+        })
+
+
+    }
+
+</script>
+{% endblock %}
